@@ -1,4 +1,4 @@
-package com.kevine.askbuddy;
+package com.kevine.askbuddy.login;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +17,15 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.kevine.askbuddy.BaseActivity;
+import com.kevine.askbuddy.MainActivity;
+import com.kevine.askbuddy.R;
+import com.kevine.askbuddy.RegisterActivity;
+import com.kevine.askbuddy.StringUtilities;
+import com.kevine.askbuddy.login.contract.LoginActivityContract;
+import com.kevine.askbuddy.login.presenter.LoginActivityPresenter;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity implements LoginActivityContract.View {
 
     private EditText email;
     private EditText password;
@@ -26,6 +33,10 @@ public class LoginActivity extends AppCompatActivity {
     private TextView registerUser;
 
     private FirebaseAuth mAuth;
+    private LoginActivityPresenter presenter;
+
+    private LoginActivityContract.View view;
+    private LoginActivityContract.Model model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
         registerUser = findViewById(R.id.register_user);
+        presenter = new LoginActivityPresenter(view,model);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -46,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
+        /*login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String txt_email = email.getText().toString();
@@ -58,7 +70,17 @@ public class LoginActivity extends AppCompatActivity {
                     loginUser(txt_email , txt_password);
                 }
             }
-        });
+        });*/
+
+        if (StringUtilities.checkFilledEditText(email,"Email Address is required")&&
+        StringUtilities.checkFilledEditText(password,"Password is required")){
+            login.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    presenter.onFormSubmitted(email.getText().toString(),password.getText().toString());
+                }
+            });
+        }
     }
 
     private void loginUser(String email, String password) {
@@ -82,5 +104,26 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onShowProgress() {
+        showProgress();
+    }
+
+    @Override
+    public void onDismissProgress() {
+        dismissProgress();
+    }
+
+    @Override
+    public void onSuccessLogin() {
+        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+        finish();
+    }
+
+    @Override
+    public void onFailedLogin(String errorMsg) {
+        Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
     }
 }

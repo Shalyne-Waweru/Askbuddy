@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.kevine.askbuddy.login.LoginActivity;
 
 public class StartActivity extends AppCompatActivity {
 
