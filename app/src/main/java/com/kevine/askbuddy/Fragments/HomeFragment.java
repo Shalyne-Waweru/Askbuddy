@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
 
         followingList = new ArrayList<>();
 
-        checkFollowingUsers();
+        //checkFollowingUsers();
 
         return view;
     }

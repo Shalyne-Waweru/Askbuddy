@@ -24,6 +24,7 @@ import com.kevine.askbuddy.Log;
 import com.kevine.askbuddy.MainActivity;
 import com.kevine.askbuddy.R;
 import com.kevine.askbuddy.RegisterActivity;
+import com.kevine.askbuddy.Sessions;
 import com.kevine.askbuddy.StringUtilities;
 import com.kevine.askbuddy.login.contract.LoginActivityContract;
 import com.kevine.askbuddy.login.presenter.LoginActivityModel;
@@ -33,6 +34,8 @@ import com.kevine.askbuddy.network.ApiInterface;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +62,7 @@ public class LoginActivity extends BaseActivity {
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
         registerUser = findViewById(R.id.register_user);
+        session = new Sessions(this);
         //presenter = new LoginActivityPresenter(this, new LoginActivityModel());
 
         //mAuth = FirebaseAuth.getInstance();
@@ -70,6 +74,8 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
+        email.setText("marvin@gmail.com");
+        password.setText("pass1234");
         /*login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,36 +137,34 @@ public class LoginActivity extends BaseActivity {
             public void onResponse(Call<String> call, Response<String> response) {
                 //login response
                 Log.debug("loginResp: ",response.body());
-                dismissProgress();
+
 
                 //try catch for the response boy
                 //in case it response is null
-                JSONObject obj = null;
                 try {
-                    obj = new JSONObject(response.body());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    assert response.body() != null;
+                    JSONObject obj = new JSONObject(response.body());
+                    dismissProgress();
+                    String respcode = obj.optString(Constants.KEY_RESPCODE);
+                    String respdesc = obj.optString(Constants.KEY_RESPDESC);
+
+
+                    if (respcode.equals("01")){
+                        JSONObject Ob = obj.optJSONObject("details");
+                        session.setUserId(Ob.optString("u_id"));
+                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                        finish();
+                    }else {
+                        showSnackBar(respdesc);
+                    }
+                }catch (JSONException e){
+
                 }
-                String respcode = obj.optString(Constants.KEY_RESPCODE);
-                String respdesc = obj.optString(Constants.KEY_RESPDESC);
 
 
-                if ((respcode.equals("01"))){
-                    //handle success response
-                    JSONObject loginDetails = obj.optJSONObject("details");
-                    session.setUserId(loginDetails.optString("u_id"));
 
-                    //intent use to MainActivity
-                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                    finish();
 
-                }else {
-                    //success response but invalid input/response
-                    //show server message for invalid credentials
-                    showSnackBar(respdesc);
-                }
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 dismissProgress();
@@ -168,5 +172,4 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
-
 }
