@@ -15,17 +15,30 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kevine.askbuddy.BaseActivity;
+import com.kevine.askbuddy.Constants;
+import com.kevine.askbuddy.Log;
 import com.kevine.askbuddy.MainActivity;
 import com.kevine.askbuddy.R;
 import com.kevine.askbuddy.RegisterActivity;
 import com.kevine.askbuddy.StringUtilities;
 import com.kevine.askbuddy.login.contract.LoginActivityContract;
+import com.kevine.askbuddy.login.presenter.LoginActivityModel;
 import com.kevine.askbuddy.login.presenter.LoginActivityPresenter;
+import com.kevine.askbuddy.network.ApiClientString;
+import com.kevine.askbuddy.network.ApiInterface;
 
-public class LoginActivity extends BaseActivity implements LoginActivityContract.View {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class LoginActivity extends BaseActivity {
 
     private EditText email;
     private EditText password;
@@ -35,8 +48,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityContract
     private FirebaseAuth mAuth;
     private LoginActivityPresenter presenter;
 
-    private LoginActivityContract.View view;
-    private LoginActivityContract.Model model;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +59,9 @@ public class LoginActivity extends BaseActivity implements LoginActivityContract
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
         registerUser = findViewById(R.id.register_user);
-        presenter = new LoginActivityPresenter(view,model);
+        //presenter = new LoginActivityPresenter(this, new LoginActivityModel());
 
-        mAuth = FirebaseAuth.getInstance();
+        //mAuth = FirebaseAuth.getInstance();
 
         registerUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,16 +83,15 @@ public class LoginActivity extends BaseActivity implements LoginActivityContract
                 }
             }
         });*/
-
-        if (StringUtilities.checkFilledEditText(email,"Email Address is required")&&
-        StringUtilities.checkFilledEditText(password,"Password is required")){
-            login.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    presenter.onFormSubmitted(email.getText().toString(),password.getText().toString());
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtilities.checkFilledEditText(email,"Email Address is required")&&
+                        StringUtilities.checkFilledEditText(password,"Password is required")){
+                    invokeLogin(email.getText().toString(),password.getText().toString());
                 }
-            });
-        }
+            }
+        });
     }
 
     private void loginUser(String email, String password) {
@@ -106,24 +117,56 @@ public class LoginActivity extends BaseActivity implements LoginActivityContract
 
     }
 
-    @Override
-    public void onShowProgress() {
+    //method to make api call
+    public void invokeLogin(String email, String password) {
         showProgress();
+
+        ApiInterface apiService = ApiClientString.getClient().create(ApiInterface.class);
+        //making api call
+        Call<String> call = apiService.loginApp(email, password);
+
+        //handle response from api
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                //login response
+                Log.debug("loginResp: ",response.body());
+                dismissProgress();
+
+                //try catch for the response boy
+                //in case it response is null
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(response.body());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String respcode = obj.optString(Constants.KEY_RESPCODE);
+                String respdesc = obj.optString(Constants.KEY_RESPDESC);
+
+
+                if ((respcode.equals("01"))){
+                    //handle success response
+                    JSONObject loginDetails = obj.optJSONObject("details");
+                    session.setUserId(loginDetails.optString("u_id"));
+
+                    //intent use to MainActivity
+                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                    finish();
+
+                }else {
+                    //success response but invalid input/response
+                    //show server message for invalid credentials
+                    showSnackBar(respdesc);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                dismissProgress();
+                Log.debug("loginResp: ",t.getMessage());
+            }
+        });
     }
 
-    @Override
-    public void onDismissProgress() {
-        dismissProgress();
-    }
-
-    @Override
-    public void onSuccessLogin() {
-        startActivity(new Intent(LoginActivity.this,MainActivity.class));
-        finish();
-    }
-
-    @Override
-    public void onFailedLogin(String errorMsg) {
-        Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-    }
 }

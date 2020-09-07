@@ -15,8 +15,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivityModel implements LoginActivityContract.Model {
+
     private LoginActivityContract.View view;
-    private LoginActivityContract.Model model;
     private Sessions sessions;
 
     @Override
@@ -25,7 +25,6 @@ public class LoginActivityModel implements LoginActivityContract.Model {
         Call<String> call = apiService.loginApp(email, password);
 
         call.enqueue(new Callback<String>() {
-
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.debug("loginResp: ",response.body());
