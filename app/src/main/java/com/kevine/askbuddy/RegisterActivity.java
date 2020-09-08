@@ -67,11 +67,7 @@ public class RegisterActivity extends BaseActivity {
                         StringUtilities.checkFilledEditText(name,"Name is required")&&
                 StringUtilities.checkFilledEditText(email,"Email Address is required")&&
                         StringUtilities.checkFilledEditText(password,"Password is required")){
-                    invokeRegister(
-                            email.getText().toString(),
-                            password.getText().toString(),
-                            name.getText().toString(),
-                            username.getText().toString());
+                    invokeRegister(email.getText().toString(),password.getText().toString(),name.getText().toString(),username.getText().toString());
                 }
             }
         });
@@ -107,6 +103,7 @@ public class RegisterActivity extends BaseActivity {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+                dismissProgress();
                 //register response
                 Log.debug("registerResp: ",response.body());
 
@@ -114,17 +111,15 @@ public class RegisterActivity extends BaseActivity {
                 try {
                     assert response.body() != null;
                     JSONObject obj = new JSONObject(response.body());
-                    dismissProgress();
+
                     String respcode = obj.optString(Constants.KEY_RESPCODE);
                     String respdesc = obj.optString(Constants.KEY_RESPDESC);
 
                     if (respcode.equals("01")){
                         JSONObject Ob = obj.optJSONObject("details");
-                        session.setUserId(Ob.optString("u_id"));
-                        Toast.makeText(RegisterActivity.this, "Update the profile " +
-                                "for better experience", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+                        startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
                         finish();
+
                     }else {
                         showSnackBar(respdesc);
                     }

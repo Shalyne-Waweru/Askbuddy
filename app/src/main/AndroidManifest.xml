@@ -16,7 +16,7 @@
         <activity android:name="com.kevine.askbuddy.FollowersActivity" />
         <activity android:name="com.kevine.askbuddy.EditProfileActivity" />
         <activity android:name="com.kevine.askbuddy.CommentActivity" />
-        <activity android:name="com.kevine.askbuddy.PostActivity" />
+        <activity android:name="com.kevine.askbuddy.post.PostActivity" />
         <activity android:name="com.kevine.askbuddy.MainActivity" />
         <activity android:name="com.kevine.askbuddy.login.LoginActivity" />
         <activity android:name="com.kevine.askbuddy.RegisterActivity" />

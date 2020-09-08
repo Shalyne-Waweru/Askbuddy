@@ -1,8 +1,7 @@
-package com.kevine.askbuddy;
+package com.kevine.askbuddy.post;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -31,12 +30,26 @@ import com.google.firebase.storage.StorageTask;
 import com.hendraanggrian.appcompat.socialview.Hashtag;
 import com.hendraanggrian.appcompat.widget.HashtagArrayAdapter;
 import com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView;
+import com.kevine.askbuddy.BaseActivity;
+import com.kevine.askbuddy.Constants;
+import com.kevine.askbuddy.Log;
+import com.kevine.askbuddy.MainActivity;
+import com.kevine.askbuddy.R;
+import com.kevine.askbuddy.network.ApiClientString;
+import com.kevine.askbuddy.network.ApiInterface;
 import com.theartofdev.edmodo.cropper.CropImage;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class PostActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class PostActivity extends BaseActivity {
 
     private Uri imageUri;
     private String imageUrl;
@@ -69,11 +82,59 @@ public class PostActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                upload();
+                //upload();
+                createPost(description.getText().toString(),"",session.getUserId(),topic.getText().toString());
             }
         });
 
         CropImage.activity().start(PostActivity.this);
+
+    }
+
+    private void createPost(String description,String imageUrl,String u_id,String topic) {
+        showProgress();
+        ApiInterface apiInterface = ApiClientString.getClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.createPost(description,imageUrl,u_id,topic);
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                dismissProgress();
+
+                Log.debug("postResp:", response.body());
+
+                try {
+                    assert response.body() !=null;
+                    JSONObject obj = new JSONObject(response.body());
+
+                    String respcode = obj.optString(Constants.KEY_RESPCODE);
+                    String respdesc = obj.optString(Constants.KEY_RESPDESC);
+
+                    if (respcode.equals("01")){
+                        //JSONObject Ob = obj.optJSONObject("details");
+                        showSnackBar(respdesc);
+
+                    }else {
+                        dismissProgress();
+                        showSnackBar(respdesc);
+                    }
+
+
+                }catch (JSONException e){
+                    dismissProgress();
+                    Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+
+            //if an error occurs in network transaction
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                dismissProgress();
+                Log.debug("postResp: ",t.getMessage());
+            }
+        });
     }
 
     private void upload() {
@@ -163,7 +224,10 @@ public class PostActivity extends AppCompatActivity {
             startActivity(new Intent(PostActivity.this , MainActivity.class));
             finish();
         }
+
     }
+
+
 
     @Override
     protected void onStart() {
