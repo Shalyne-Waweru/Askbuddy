@@ -16,7 +16,7 @@ public interface ApiInterface {
     @POST("registerUser.php") //api endpoint
     Call<String> registerApp(@Field("u_bio") String bio,
                              @Field("u_email") String email,
-                          @Field("u_password") String password,
+                             @Field("u_password") String password,
                              @Field("u_imageurl") String imageurl,
                              @Field("u_name") String name,
                              @Field("u_username") String username);
