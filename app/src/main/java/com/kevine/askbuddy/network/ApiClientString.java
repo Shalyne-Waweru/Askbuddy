@@ -10,7 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-
+// Acts as a RestAdapter to implement the APIs and creates a connection to the Interface
 public class ApiClientString {
 
     public static final String BASE_URL = "http://gatesystem.rongaiws.com/askbuddyapi/";

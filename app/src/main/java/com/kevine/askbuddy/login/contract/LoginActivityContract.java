@@ -10,10 +10,11 @@ public interface LoginActivityContract {
      }
 
      interface Presenter{
-         void onFormSubmitted(String email,String passowrd);
+         void onFormSubmitted(String email,String password);
      }
 
      interface Model{
-         void invokeLogin(String email,String passowrd);
+         void invokeLogin(String email,String password);
+         //void invokeRegister(String username,String name,String email,String password);
      }
 }

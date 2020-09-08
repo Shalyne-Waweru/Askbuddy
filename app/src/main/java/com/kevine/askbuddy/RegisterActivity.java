@@ -1,31 +1,29 @@
 package com.kevine.askbuddy;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.kevine.askbuddy.login.LoginActivity;
+import com.kevine.askbuddy.network.ApiClientString;
+import com.kevine.askbuddy.network.ApiInterface;
 
-import java.util.HashMap;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class RegisterActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class RegisterActivity extends BaseActivity {
 
     private EditText username;
     private EditText name;
@@ -34,10 +32,10 @@ public class RegisterActivity extends AppCompatActivity {
     private Button register;
     private TextView loginUser;
 
-    private DatabaseReference mRootRef;
-    private FirebaseAuth mAuth;
+         private DatabaseReference mRootRef;
+         private FirebaseAuth mAuth;
 
-    ProgressDialog pd;
+         ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +49,9 @@ public class RegisterActivity extends AppCompatActivity {
         register = findViewById(R.id.register);
         loginUser = findViewById(R.id.login_user);
 
-        mRootRef = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
-        pd = new ProgressDialog(this);
+            mRootRef = FirebaseDatabase.getInstance().getReference();
+            mAuth = FirebaseAuth.getInstance();
+            pd = new ProgressDialog(this);
 
         loginUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +61,22 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtilities.checkFilledEditText(username,"Username is required")&&
+                        StringUtilities.checkFilledEditText(name,"Name is required")&&
+                StringUtilities.checkFilledEditText(email,"Email Address is required")&&
+                        StringUtilities.checkFilledEditText(password,"Password is required")){
+                    invokeRegister(
+                            email.getText().toString(),
+                            password.getText().toString(),
+                            name.getText().toString(),
+                            username.getText().toString());
+                }
+            }
+        });
+
+        /*register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String txtUsername = username.getText().toString();
@@ -79,10 +93,57 @@ public class RegisterActivity extends AppCompatActivity {
                     registerUser(txtUsername , txtName , txtEmail , txtPassword);
                 }
             }
+        });*/
+    }
+
+    private void invokeRegister(String email, String password, String name, String username) {
+        showProgress();
+        ApiInterface apiService = ApiClientString.getClient().create(ApiInterface.class);
+        //making api call
+
+        Call<String> call = apiService.registerApp("",email,password, "",name,username);
+
+        //handling the response from the api
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                //register response
+                Log.debug("registerResp: ",response.body());
+
+                //try catch for the response body
+                try {
+                    assert response.body() != null;
+                    JSONObject obj = new JSONObject(response.body());
+                    dismissProgress();
+                    String respcode = obj.optString(Constants.KEY_RESPCODE);
+                    String respdesc = obj.optString(Constants.KEY_RESPDESC);
+
+                    if (respcode.equals("01")){
+                        JSONObject Ob = obj.optJSONObject("details");
+                        session.setUserId(Ob.optString("u_id"));
+                        Toast.makeText(RegisterActivity.this, "Update the profile " +
+                                "for better experience", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+                        finish();
+                    }else {
+                        showSnackBar(respdesc);
+                    }
+                }catch (JSONException e){
+
+                }
+
+            }
+
+            //if an error occurs in network transaction
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                dismissProgress();
+                Log.debug("registerResp: ",t.getMessage());
+            }
         });
     }
 
-    private void registerUser(final String username, final String name, final String email, String password) {
+   /* private void registerUser(final String username, final String name, final String email, String password) {
 
         pd.setMessage("Please Wait!");
         pd.show();
@@ -123,5 +184,5 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-    }
+    }*/
 }

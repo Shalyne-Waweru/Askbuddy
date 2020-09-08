@@ -15,10 +15,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public SweetAlertDialog pDialog;
     public Sessions session;
-    private Toolbar mTopToolbar;
-
-
-
+    //private Toolbar mTopToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,8 +23,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         session = new Sessions(this);
 
     }
-
-
 
     public void showProgress(){
         if(pDialog != null)

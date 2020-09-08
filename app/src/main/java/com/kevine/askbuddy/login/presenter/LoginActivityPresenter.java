@@ -6,14 +6,14 @@ public class LoginActivityPresenter implements LoginActivityContract.Presenter {
     private LoginActivityContract.View view;
     private LoginActivityContract.Model model;
 
-    public LoginActivityPresenter(LoginActivityContract.View view, LoginActivityContract.Model model) {
+    /*public LoginActivityPresenter(LoginActivityContract.View view, LoginActivityContract.Model model) {
         this.view = view;
         this.model = model;
     }
-
+*/
     @Override
     public void onFormSubmitted(String email, String password) {
-        view.onShowProgress();
+//        view.onShowProgress();
         model.invokeLogin(email,password);
     }
 }

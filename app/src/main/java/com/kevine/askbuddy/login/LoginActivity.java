@@ -52,7 +52,6 @@ public class LoginActivity extends BaseActivity {
     private LoginActivityPresenter presenter;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +75,17 @@ public class LoginActivity extends BaseActivity {
 
         email.setText("marvin@gmail.com");
         password.setText("pass1234");
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtilities.checkFilledEditText(email,"Email Address is required")&&
+                        StringUtilities.checkFilledEditText(password,"Password is required")){
+                    invokeLogin(email.getText().toString(),password.getText().toString());
+                }
+            }
+        });
+
         /*login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,25 +99,16 @@ public class LoginActivity extends BaseActivity {
                 }
             }
         });*/
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (StringUtilities.checkFilledEditText(email,"Email Address is required")&&
-                        StringUtilities.checkFilledEditText(password,"Password is required")){
-                    invokeLogin(email.getText().toString(),password.getText().toString());
-                }
-            }
-        });
     }
 
-    private void loginUser(String email, String password) {
+    /*private void loginUser(String email, String password) {
 
         mAuth.signInWithEmailAndPassword(email , password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Toast.makeText(LoginActivity.this, "Update the profile " +
-                            "for better expereince", Toast.LENGTH_SHORT).show();
+                            "for better experience", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this , MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -121,26 +122,24 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-    }
+    }*/
 
     //method to make api call
     public void invokeLogin(String email, String password) {
-        showProgress();
+        showProgress(); //defined in the BaseActivity
 
         ApiInterface apiService = ApiClientString.getClient().create(ApiInterface.class);
         //making api call
         Call<String> call = apiService.loginApp(email, password);
 
-        //handle response from api
+        //handling the response from api
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 //login response
                 Log.debug("loginResp: ",response.body());
 
-
-                //try catch for the response boy
-                //in case it response is null
+                //try catch for the response body
                 try {
                     assert response.body() != null;
                     JSONObject obj = new JSONObject(response.body());
@@ -152,6 +151,8 @@ public class LoginActivity extends BaseActivity {
                     if (respcode.equals("01")){
                         JSONObject Ob = obj.optJSONObject("details");
                         session.setUserId(Ob.optString("u_id"));
+                        Toast.makeText(LoginActivity.this, "Update the profile " +
+                                "for better experience", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(LoginActivity.this,MainActivity.class));
                         finish();
                     }else {
@@ -161,10 +162,9 @@ public class LoginActivity extends BaseActivity {
 
                 }
 
-
-
-
             }
+
+            //if an error occurs in network transaction
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 dismissProgress();
