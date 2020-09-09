@@ -83,7 +83,7 @@ public class PostActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 //upload();
-                createPost(description.getText().toString(),"",session.getUserId(),topic.getText().toString());
+                createPost(description.getText().toString(), session.getUserId(),topic.getText().toString());
             }
         });
 
@@ -91,10 +91,11 @@ public class PostActivity extends BaseActivity {
 
     }
 
-    private void createPost(String description,String imageUrl,String u_id,String topic) {
+    private void createPost(String description, String u_id, String topic) {
         showProgress();
+
         ApiInterface apiInterface = ApiClientString.getClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.createPost(description,imageUrl,u_id,topic);
+        Call<String> call = apiInterface.createPost(description, "",u_id,topic);
 
         call.enqueue(new Callback<String>() {
             @Override
@@ -112,6 +113,8 @@ public class PostActivity extends BaseActivity {
 
                     if (respcode.equals("01")){
                         //JSONObject Ob = obj.optJSONObject("details");
+                        startActivity(new Intent(PostActivity.this , MainActivity.class));
+                        //finish();
                         showSnackBar(respdesc);
 
                     }else {

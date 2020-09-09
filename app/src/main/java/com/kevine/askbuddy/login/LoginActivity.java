@@ -73,8 +73,8 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-        email.setText("davis@gmail.com");
-        password.setText("12345");
+        email.setText("shalynewaweru@gmail.com");
+        password.setText("123456");
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
