@@ -68,10 +68,8 @@ dependencies {
     implementation 'com.karumi:dexter:6.2.1'
 
     //butter knife
-    annotationProcessor 'com.jakewharton:butterknife:10.2.3'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
+    implementation 'com.jakewharton:butterknife:10.2.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
 
-    /*annotationProcessor 'com.jakewharton:butterknife:10.2.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'*/
 }
 apply plugin: 'com.google.gms.google-services'

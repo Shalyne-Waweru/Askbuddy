@@ -58,7 +58,7 @@ public class HomeFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_home, container, false);
 
-        rvPost = view.findViewById(R.id.recycler_view_posts);
+        rvPost = view.findViewById(R.id.rvPost);
         rvPost.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -66,7 +66,7 @@ public class HomeFragment extends BaseFragment {
         linearLayoutManager.setReverseLayout(true);
 
         rvPost.setLayoutManager(linearLayoutManager);
-        postList = new ArrayList<>();
+        postModelList = new ArrayList<>();
         postAdapter = new ApiPostAdapter(postModelList, getContext());
         rvPost.setAdapter(postAdapter);
 
@@ -152,8 +152,8 @@ public class HomeFragment extends BaseFragment {
                                     postObj.optString("p_topic"),
                                     postObj.optString("p_likes")
                             );
-                           // postModelList.add(postModel);
-                            Log.debug("jsonArray",postModel.getU_id());
+                            postModelList.add(postModel);
+                            //Log.debug("jsonArray",postModel.getU_id());
                         }
                         postAdapter.notifyDataSetChanged();
                     }

@@ -33,7 +33,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fetchPost();
+        //fetchPost();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
