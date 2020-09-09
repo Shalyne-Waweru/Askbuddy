@@ -31,4 +31,19 @@ public interface ApiInterface {
     @FormUrlEncoded //annotation that used with POST type request
     @POST("fetchPost.php") //api endpoint
     Call<String> fetchPostByUserID(@Field("u_id") String u_id);
+
+    @FormUrlEncoded //annotation that used with POST type request
+    @POST("updatePost.php") //api endpoint
+    Call<String> updatePost(@Field("p_id") String p_id,
+                            @Field("p_description") String p_description);
+
+    @FormUrlEncoded //annotation that used with POST type request
+    @POST("deletePost.php") //api endpoint
+    Call<String> deletePost(@Field("p_id") String p_id);
+
+    @FormUrlEncoded //annotation that used with POST type request
+    @POST("createComment.php") //api endpoint
+    Call<String> createComment(@Field("p_id") String p_id,
+                                   @Field("u_id") String u_id,
+                                   @Field("comment") String comment);
 }
