@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,15 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.kevine.askbuddy.OptionsActivity"></activity>
-        <activity android:name="com.kevine.askbuddy.FollowersActivity" />
-        <activity android:name="com.kevine.askbuddy.EditProfileActivity" />
-        <activity android:name="com.kevine.askbuddy.CommentActivity" />
-        <activity android:name="com.kevine.askbuddy.post.PostActivity" />
-        <activity android:name="com.kevine.askbuddy.MainActivity" />
-        <activity android:name="com.kevine.askbuddy.login.LoginActivity" />
-        <activity android:name="com.kevine.askbuddy.RegisterActivity" />
-        <activity android:name="com.kevine.askbuddy.StartActivity">
+        <activity android:name=".AllPostsActivity"></activity>
+        <activity android:name=".OptionsActivity" />
+        <activity android:name=".FollowersActivity" />
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".CommentActivity" />
+        <activity android:name=".post.PostActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".login.LoginActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,5 +1,7 @@
 package com.kevine.askbuddy.network;
 
+import com.kevine.askbuddy.PostListResponse;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -7,7 +9,7 @@ import retrofit2.http.POST;
 
 public interface ApiInterface {
 
-    @FormUrlEncoded //annotation that used with POST type request
+    @FormUrlEncoded //annotation that used with POST type request;send the data using api to our server
     @POST("loginUser.php") //api endpoint
     Call<String> loginApp(@Field("u_email") String email,
                           @Field("u_password") String password);
@@ -31,6 +33,10 @@ public interface ApiInterface {
     @FormUrlEncoded //annotation that used with POST type request
     @POST("fetchPost.php") //api endpoint
     Call<String> fetchPostByUserID(@Field("u_id") String u_id);
+
+    /*@FormUrlEncoded //annotation that used with POST type request
+    @POST("fetchPost.php") //api endpoint
+    Call<PostListResponse> fetchPostByUserID(@Field("u_id") String u_id);*/
 
     @FormUrlEncoded //annotation that used with POST type request
     @POST("updatePost.php") //api endpoint

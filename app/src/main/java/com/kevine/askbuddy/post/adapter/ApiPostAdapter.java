@@ -15,8 +15,8 @@ import com.kevine.askbuddy.post.model.PostModel;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+/*import butterknife.BindView;
+import butterknife.ButterKnife;*/
 
 public class ApiPostAdapter extends RecyclerView.Adapter<ApiPostAdapter.ViewHolder> {
 
@@ -43,9 +43,9 @@ public class ApiPostAdapter extends RecyclerView.Adapter<ApiPostAdapter.ViewHold
         PostModel postDetails = postModelList.get(position);
         //setting data to our views
 
-        holder.tvPostTitle.setText(postDetails.getTopic());
+        /*holder.tvPostTitle.setText(postDetails.getTopic());
         holder.tvPostDesc.setText(postDetails.getDescription());
-        holder.tvPostLikes.setText(postDetails.getLikes());
+        holder.tvPostLikes.setText(postDetails.getLikes());*/
 
     }
 
@@ -56,25 +56,25 @@ public class ApiPostAdapter extends RecyclerView.Adapter<ApiPostAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         //declare variables
-        @BindView(R.id.tvPostTitle)
-        TextView tvPostTitle;
+        /*@BindView(R.id.tvPostTitle)
+        TextView tvPostTitle;*/
 
-        @BindView(R.id.tvPostDesc)
-        TextView tvPostDesc;
+        /*@BindView(R.id.tvPostDesc)
+        TextView tvPostDesc;*/
 
-        @BindView(R.id.tvPostLikes)
-        TextView tvPostLikes;
+        /*@BindView(R.id.tvPostLikes)
+        TextView tvPostLikes;*/
 
-        @BindView(R.id.ivLike)
-        ImageView ivLike;
+        /*@BindView(R.id.ivLike)
+        ImageView ivLike;*/
 
-        @BindView(R.id.ivUnlike)
-        ImageView ivUnlike;
+        /*@BindView(R.id.ivUnlike)
+        ImageView ivUnlike;*/
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             //initalizing variables
-            ButterKnife.bind(this,itemView);
+            /*ButterKnife.bind(this,itemView);*/
         }
     }
 }
